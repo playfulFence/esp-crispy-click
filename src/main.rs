@@ -1,6 +1,8 @@
 #![no_std]
 #![no_main]
 
+//use std::thread;
+
 #[cfg(feature="esp32")]
 use esp32_hal as hal;
 #[cfg(feature="esp32s2")]
@@ -297,40 +299,53 @@ fn main() -> ! {
 
     display.clear(Rgb565::WHITE).unwrap();
     
-    let mut last_state : State = State::High(0);
+    let mut menu_cnt = 0;
+    let mut down_cnt = 0; 
+    let mut up_cnt   = 0;
 
 
     loop {
-        if last_state == button2.state
+
+        if let Event::Pressed = button2.poll()
         {
-            continue;
+            menu_cnt += 1;
+
+            display.clear(Rgb565::WHITE).unwrap();
+            println!("Menu! (x{})", menu_cnt);
+            #[cfg(feature = "st7789")]
+            Text::new("Menu!",
+                    display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
+                    MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
+            .draw(&mut display)
+            .unwrap();
         }
-        else 
+        if let Event::Pressed = button0.poll()
         {
-            if let Event::Pressed = button2.poll()
-            {
-                display.clear(Rgb565::WHITE).unwrap();
-                println!("Pressed!");
-                #[cfg(feature = "st7789")]
-                Text::new("Pressed",
-                        display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
-                        MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
-                .draw(&mut display)
-                .unwrap();
-                last_state = button2.state;
-            }
-            else {
-                display.clear(Rgb565::WHITE).unwrap();
-                println!("Released!");
-                #[cfg(feature = "st7789")]
-                Text::new("Released",
-                        display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
-                        MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
-                .draw(&mut display)
-                .unwrap();
-                last_state = button2.state;
-            }
+            up_cnt += 1;
+
+            display.clear(Rgb565::WHITE).unwrap();
+            println!("Up! (x{})", up_cnt);
+            #[cfg(feature = "st7789")]
+            Text::new("Up!",
+                    display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
+                    MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
+            .draw(&mut display)
+            .unwrap();
         }
+        if let Event::Pressed = button1.poll()
+        {
+            down_cnt += 1;
+
+            display.clear(Rgb565::WHITE).unwrap();
+            println!("Down! (x{})", down_cnt);
+            #[cfg(feature = "st7789")]
+            Text::new("Down!",
+                    display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
+                    MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
+            .draw(&mut display)
+            .unwrap();
+        }
+            
         // if button2.button.is_low().unwrap()
         // {
         //     if last_state == button2.button.is_low().unwrap()

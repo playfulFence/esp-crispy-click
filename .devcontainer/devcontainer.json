@@ -1,5 +1,5 @@
 {
-  "name": "esp_crispy_click",
+  "name": "esp-crispy-click",
   // Select between image and build propieties to pull or build the image.
   // "image": "docker.io/espressif/idf-rust:esp32s3_1.62.1.0",
   "build": {
@@ -7,7 +7,7 @@
     "args": {
       "CONTAINER_USER": "esp",
       "CONTAINER_GROUP": "esp",
-      "ESP_BOARD": "esp32s3"
+      "ESP_BOARD": "esp32"
     }
   },
   "settings": {
@@ -39,6 +39,6 @@
     9333,
     8000
   ],
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/esp/esp_crispy_click,type=bind,consistency=cached",
-  "workspaceFolder": "/home/esp/esp_crispy_click"
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/esp/esp-crispy-click,type=bind,consistency=cached",
+  "workspaceFolder": "/home/esp/esp-crispy-click"
 }

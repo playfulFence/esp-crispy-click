@@ -26,12 +26,12 @@ elif [ "${CODESPACE_NAME}" != "" ]; then
     export WOKWI_HOST=${CODESPACE_NAME}-9012.githubpreview.dev
 fi
 
-export ESP_ARCH=xtensa-esp32s3-none-elf
+export ESP_ARCH=xtensa-esp32-none-elf
 
 # TODO: Update with your Wokwi Project
-export WOKWI_PROJECT_ID=""
+export WOKWI_PROJECT_ID="341705886867128915"
 if [ "${WOKWI_PROJECT_ID}" == "" ]; then
-    wokwi-server --chip esp32s3 target/${ESP_ARCH}/${BUILD_MODE}/esp_crispy_click
+    wokwi-server --chip esp32 target/${ESP_ARCH}/${BUILD_MODE}/esp-crispy-click
 else
-    wokwi-server --chip esp32s3 --id ${WOKWI_PROJECT_ID} target/${ESP_ARCH}/${BUILD_MODE}/esp_crispy_click
+    wokwi-server --chip esp32 --id ${WOKWI_PROJECT_ID} target/${ESP_ARCH}/${BUILD_MODE}/esp-crispy-click
 fi

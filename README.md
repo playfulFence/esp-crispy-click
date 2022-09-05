@@ -2,11 +2,15 @@
 Example for button initialisation and demonstration of work with them.
 
 ## Description 
-Here you can find a bare-metal example for newcomers that shows, how to initialise and work with buttons on different Espressif boards : 
+Here you can find a simple bare-metal example for newcomers that shows, how to initialise and work with buttons on different Espressif boards: 
  - [ESP32](https://www.espressif.com/en/products/socs/esp32)
  - [ESP32-S2](https://www.espressif.com/en/products/socs/esp32-s2)
  - [ESP32-S3-USB-OTG](https://www.espressif.com/en/products/socs/esp32-s3)
  - [ESP32-C3](https://www.espressif.com/en/products/socs/esp32-c3)
+
+ > **Warning**
+>
+>  ESP32-S3 is not available in Wokwi
 
  >### **Important** : below in this branch you can find pin connection for REAL hardware, not for Wokwi. Pin connection for every chip for Wokwi can be found in corresponding branches
 
@@ -32,6 +36,8 @@ Here you can find a bare-metal example for newcomers that shows, how to initiali
 
 >### [Corresponding Wokwi project](https://wokwi.com/projects/341706650098336338)
 <br>
+
+ >### **Important** : If you want to set your own pins for buttons or change the number of buttons, you should customize it in [these](https://github.com/playfulFence/esp-crispy-click/blob/main/src/main.rs#L287-L289) lines of code
 
 ## Build and flash
 

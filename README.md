@@ -28,7 +28,7 @@ Here you can find a bare-metal example for newcomers that shows, how to initiali
 
 ### ESP32-C3 with ILI9341 display and two buttons
 
-<a data-flickr-embed="true" href="https://www.flickr.com/photos/196173186@N08/52335295947/in/dateposted-public/" title="crispy-click-esp32c3"><img src="https://live.staticflickr.com/65535/52335295947_af839d581f_c.jpg" width="650" height="350" alt="crispy-click-esp32c3"></a>
+<a data-flickr-embed="true" href="https://www.flickr.com/photos/196173186@N08/52336708125/in/dateposted/" title="crispy-click-esp32c3"><img src="https://live.staticflickr.com/65535/52336708125_24c263a48e_c.jpg" width="650" height="350" alt="crispy-click-esp32c3"></a>
 
 >### [Corresponding Wokwi project](https://wokwi.com/projects/341706650098336338)
 <br>

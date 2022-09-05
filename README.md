@@ -69,7 +69,7 @@ cargo espflash --release --target riscv32imac-unknown-none-elf
 This repository offers Dev Containers supports for:
 -  [Gitpod](https://gitpod.io/)
     - ESP32
-        - [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/https://github.com/playfulFence/esp-crispy-click/tree/target/esp32)
+        - [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/playfulFence/esp-crispy-click/tree/target/esp32)
 
 -  [VS Code Dev Containers](https://code.visualstudio.com/docs/remote/containers#_quick-start-open-an-existing-folder-in-a-container)
 -  [GitHub Codespaces](https://docs.github.com/en/codespaces/developing-in-codespaces/creating-a-codespace)

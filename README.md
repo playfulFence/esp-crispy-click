@@ -1,2 +1,41 @@
-# esp-crispy-click
-Example for button initialisation and demonstration of work with it
+# esp-crispy-click :crab:
+Example for button initialisation and demonstration of work with them.
+
+## Description 
+Here you can find a bare-metal example for newcomers that shows, how to initialise and work with buttons on different Espressif boards : 
+ - [ESP32](https://www.espressif.com/en/products/socs/esp32)
+ - [ESP32-S2](https://www.espressif.com/en/products/socs/esp32-s2)
+ - [ESP32-S3-USB-OTG](https://www.espressif.com/en/products/socs/esp32-s3)
+ - [ESP32-C3](https://www.espressif.com/en/products/socs/esp32-c3)
+
+ >### **Important** : below in this branch you can find pin connection for REAL hardware, not for Wokwi. Pin connection for every chip for Wokwi can be found in corresponding branches
+
+## Some screenshots
+
+
+
+## Build and flash
+
+### Build for ESP32-S3-USB-OTG
+
+```
+cargo espflash --release --target xtensa-esp32s3-none-elf 
+```
+
+### Build for ESP32
+
+```
+cargo espflash --release --target xtensa-esp32-none-elf 
+```
+
+### Build for ESP32-S2
+
+```
+cargo espflash --release --target xtensa-esp32s2-none-elf 
+```
+
+### Build for ESP32-C3
+
+```
+cargo espflash --release --target riscv32imac-unknown-none-elf
+```

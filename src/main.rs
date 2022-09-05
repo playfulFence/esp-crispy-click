@@ -31,8 +31,8 @@ use ili9341::{DisplaySize240x320, Ili9341, Orientation};
 #[cfg(feature = "st7789")]
 use st7789::*;
 
+/* Display and graphics stuff */
 use display_interface_spi::SPIInterfaceNoCS;
-
 use embedded_graphics::mono_font::MonoTextStyle;
 use embedded_graphics::pixelcolor::*;
 use embedded_graphics::prelude::*;
@@ -43,7 +43,7 @@ use embedded_graphics::geometry::*;
 use embedded_graphics::draw_target::DrawTarget;
 use embedded_hal;
 
-
+/* Fonts */
 use profont::{PROFONT_24_POINT, PROFONT_18_POINT};
 
 
@@ -82,6 +82,7 @@ impl ili9341::Mode for KalugaOrientation {
     }
 }
 
+/* Debouncing algorythm */
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum Event {
@@ -139,7 +140,6 @@ impl<T: ::embedded_hal::digital::v2::InputPin<Error = core::convert::Infallible>
 }
 
  
-
 
 #[entry]
 fn main() -> ! {
@@ -269,6 +269,8 @@ fn main() -> ! {
     #[cfg(feature = "st7789")]
     let mut display = st7789::ST7789::new(di, reset, 240, 240);
 
+    /* st7789 display requires additional init functions */
+
     #[cfg(feature = "st7789")]
     display.init(&mut delay).unwrap();
     #[cfg(feature = "st7789")]
@@ -279,26 +281,16 @@ fn main() -> ! {
 
     display.clear(Rgb565::WHITE).unwrap();
 
-    // #[cfg(feature = "st7789")]
-    // Text::new("Display initialized",
-    //           display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
-    //           MonoTextStyle::new(&PROFONT_18_POINT, Rgb565::BLACK))
-    // .draw(&mut display)
-    // .unwrap();
-    // #[cfg(feature = "ili9341")]
-    // Text::new("Display initialized",
-    //           display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
-    //           MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
-    // .draw(&mut display)
-    // .unwrap();
+    /* Initialise buttons */
 
+    /* All available buttons for ESP32-S3-USB-OTG */
     let mut button0 = Button::new(io.pins.gpio10.into_pull_up_input()); //io.pins.gpio10.into_pull_up_input(); // UP button on esp32-s3-usb-otg (low level when pressed)
     let mut button1 = Button::new(io.pins.gpio11.into_pull_up_input()); // DOWN button on esp32-s3-usb-otg (low level when pressed)
     let mut button2 = Button::new(io.pins.gpio14.into_pull_up_input()); // MENU button on esp32-s3-usb-otg (low level when pressed)
 
-
-    display.clear(Rgb565::WHITE).unwrap();
     
+    /* Counters for number of pushes of each button.
+       Just to verify, that debouncing works correctly  */
     let mut menu_cnt = 0;
     let mut down_cnt = 0; 
     let mut up_cnt   = 0;
@@ -312,7 +304,6 @@ fn main() -> ! {
 
             display.clear(Rgb565::WHITE).unwrap();
             println!("Menu! (x{})", menu_cnt);
-            #[cfg(feature = "st7789")]
             Text::new("Menu!",
                     display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
                     MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
@@ -325,7 +316,6 @@ fn main() -> ! {
 
             display.clear(Rgb565::WHITE).unwrap();
             println!("Up! (x{})", up_cnt);
-            #[cfg(feature = "st7789")]
             Text::new("Up!",
                     display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
                     MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
@@ -338,7 +328,6 @@ fn main() -> ! {
 
             display.clear(Rgb565::WHITE).unwrap();
             println!("Down! (x{})", down_cnt);
-            #[cfg(feature = "st7789")]
             Text::new("Down!",
                     display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
                     MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
@@ -346,41 +335,6 @@ fn main() -> ! {
             .unwrap();
         }
             
-        // if button2.button.is_low().unwrap()
-        // {
-        //     if last_state == button2.button.is_low().unwrap()
-        //     {
-        //         continue;
-        //     }
-        //     else {
-        //         display.clear(Rgb565::WHITE).unwrap();
-        //         println!("Pressed!");
-        //         #[cfg(feature = "st7789")]
-        //         Text::new("Pressed",
-        //                 display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
-        //                 MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
-        //         .draw(&mut display)
-        //         .unwrap();
-        //     }
-        //     last_state = true
-        // }
-        // else 
-        // {
-        //     if last_state == button2.button.is_low().unwrap()
-        //     {
-        //         continue;
-        //     }
-        //     else {
-        //         display.clear(Rgb565::WHITE).unwrap();
-        //         println!("Released!");
-        //         #[cfg(feature = "st7789")]
-        //         Text::new("Released",
-        //                 display.bounding_box().center() - Size::new(display.bounding_box().size.width/2 - 10, 0), 
-        //                 MonoTextStyle::new(&PROFONT_24_POINT, Rgb565::BLACK))
-        //         .draw(&mut display)
-        //         .unwrap();
-        //     }
-        //     last_state = false
-        // }
+
     }
 }

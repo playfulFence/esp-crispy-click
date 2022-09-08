@@ -13,7 +13,7 @@ fi
 
 case "$1" in
 "" | "release")
-    cargo build --release --target xtensa-esp32-none-elf
+    cargo build --release --target riscv32imac-unknown-none-elf
     ;;
 "debug")
     cargo build

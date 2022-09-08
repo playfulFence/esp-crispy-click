@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use esp32_hal::{
+use esp32c3_hal::{
     clock::ClockControl,
     pac::Peripherals,
     gpio_types::*,
@@ -32,7 +32,8 @@ use embedded_hal;
 
 use profont::{PROFONT_24_POINT, PROFONT_18_POINT};
 
-use xtensa_lx_rt::entry;
+use riscv_rt;
+use riscv_rt::entry;
 
 use esp_println::println;
 use esp_backtrace as _;
@@ -131,7 +132,7 @@ impl<T: ::embedded_hal::digital::v2::InputPin<Error = core::convert::Infallible>
 fn main() -> ! {
     let peripherals = Peripherals::take().unwrap();
 
-    let mut system = peripherals.DPORT.split();
+    let mut system = peripherals.SYSTEM.split();
 
     let mut clocks = ClockControl::boot_defaults(system.clock_control).freeze();
 
@@ -152,22 +153,22 @@ fn main() -> ! {
     
 
     /* Set corresponding pins */
- 
-    let mosi = io.pins.gpio23;
-    let cs = io.pins.gpio15;
-    let rst = io.pins.gpio4;
-    let dc = io.pins.gpio2;
-    let sck = io.pins.gpio18;
-    let miso = io.pins.gpio8;
-    let backlight = io.pins.gpio17;
+    let mosi = io.pins.gpio7;
+    let cs = io.pins.gpio2;
+    let rst = io.pins.gpio10;
+    let dc = io.pins.gpio3;
+    let sck = io.pins.gpio6;
+    let miso = io.pins.gpio9;
+    let backlight = io.pins.gpio4;
 
-    
     /* Then set backlight (set_low() - display lights up when signal is in 0, set_high() - opposite case(for example.)) */
     let mut backlight = backlight.into_push_pull_output();
-    backlight.set_high().unwrap();
+    //backlight.set_low().unwrap();
 
+
+    /* Configure SPI */
     let spi = spi::Spi::new(
-        peripherals.SPI3,
+        peripherals.SPI2,
         sck,
         mosi,
         miso,
@@ -181,16 +182,20 @@ fn main() -> ! {
     let di = SPIInterfaceNoCS::new(spi, dc.into_push_pull_output());
     let reset = rst.into_push_pull_output();
     let mut delay = Delay::new(&clocks);
+    let mut display = Ili9341::new(
+        di,
+        reset, 
+        &mut delay, 
+        KalugaOrientation::LandscapeFlipped, 
+        DisplaySize240x320
+        ).unwrap();
+        
+    println!("Initialized");
 
-    let mut display = Ili9341::new(di, reset, &mut delay, KalugaOrientation::LandscapeFlipped, DisplaySize240x320).unwrap();
-    
-    println!("Display initialized");
+    display.clear(Rgb565::WHITE).unwrap();
 
-    display.clear(Rgb565::WHITE).unwrap(); 
-
-    let mut button_green = Button::new(io.pins.gpio21.into_pull_up_input());
-    let mut button_blue  = Button::new(io.pins.gpio13.into_pull_up_input());
-
+    let mut button_green = Button::new(io.pins.gpio0.into_pull_up_input());
+    let mut button_blue  = Button::new(io.pins.gpio1.into_pull_up_input());
 
  
     Text::with_text_style("Press GREEN button",

@@ -18,6 +18,6 @@ case "$1" in
     ;;
 esac
 
-export ESP_ARCH=xtensa-esp32-none-elf
+export ESP_ARCH=riscv32imac-unknown-none-elf
 
-web-flash --chip esp32 target/${ESP_ARCH}/${BUILD_MODE}/esp-crispy-click
+web-flash --chip esp32c3 target/${ESP_ARCH}/${BUILD_MODE}/esp-crispy-click

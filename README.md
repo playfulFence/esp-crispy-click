@@ -46,25 +46,25 @@ Here you can find a simple bare-metal example for newcomers that shows, how to i
 ### Build for ESP32-S3-USB-OTG
 
 ```
-cargo espflash --release --target xtensa-esp32s3-none-elf 
+cargo espflash --release --monitor --target xtensa-esp32s3-none-elf 
 ```
 
 ### Build for ESP32
 
 ```
-cargo espflash --release --target xtensa-esp32-none-elf 
+cargo espflash --release --monitor --target xtensa-esp32-none-elf 
 ```
 
 ### Build for ESP32-S2
 
 ```
-cargo espflash --release --target xtensa-esp32s2-none-elf 
+cargo espflash --release --monitor --target xtensa-esp32s2-none-elf 
 ```
 
 ### Build for ESP32-C3
 
 ```
-cargo espflash --release --target riscv32imac-unknown-none-elf
+cargo espflash --release --monitor --target riscv32imac-unknown-none-elf
 ```
 
 ## Dev Containers

@@ -75,52 +75,49 @@ pub enum Event {
     Released,
     Nothing,
 }
-#[derive(Copy, Clone, PartialEq)]
-enum State {
-    High(u8),
-    Low(u8),
-}
 pub struct Button<T> {
     button: T,
-    state: State,
+    pressed: bool,
 }
 impl<T: ::embedded_hal::digital::v2::InputPin<Error = core::convert::Infallible>> Button<T> {
     pub fn new(button: T) -> Self {
         Button {
             button,
-            state: State::High(0),
+            pressed: true,
         }
     }
-    pub fn poll(&mut self) -> Event {
-        use self::State::*;
-        let value = self.button.is_high().unwrap();
-        match &mut self.state {
-            High(cnt) => {
-                if value {
-                    *cnt = 0
-                } else {
-                    *cnt += 1
-                }
-            }
-            Low(cnt) => {
-                if value {
-                    *cnt += 1
-                } else {
-                    *cnt = 0
-                }
-            }
-        }
-        match self.state {
-            High(cnt) if cnt >= 30 => {
-                self.state = Low(0);
+    pub fn check(&mut self){
+        self.pressed = !self.button.is_low().unwrap();
+    }
+
+    pub fn poll(&mut self, delay :&mut Delay) -> Event {
+        let pressed_now = !self.button.is_low().unwrap();
+        if !self.pressed  &&  pressed_now
+        {
+            delay.delay_ms(30 as u32);
+            self.check();
+            if !self.button.is_low().unwrap() {
                 Event::Pressed
             }
-            Low(cnt) if cnt >= 30 => {
-                self.state = High(0);
+            else {
+                Event::Nothing
+            }
+        }
+        else if self.pressed && !pressed_now{
+            delay.delay_ms(30 as u32);
+            self.check();
+            if self.button.is_low().unwrap()
+            {
                 Event::Released
             }
-            _ => Event::Nothing,
+            else {
+                Event::Nothing
+            }
         }
+        else{
+            Event::Nothing
+        }
+        
     }
 }
 
@@ -216,7 +213,7 @@ fn main() -> ! {
     let mut last_pressed_blue : bool = false;
 
     loop {
-        if let Event::Pressed = button_green.poll()
+        if let Event::Pressed = button_green.poll(&mut delay)
         {
             green_cnt += 1;
 
@@ -263,7 +260,7 @@ fn main() -> ! {
             }
             last_pressed_blue = false;
         }
-        if let Event::Pressed = button_blue.poll()
+        if let Event::Pressed = button_blue.poll(&mut delay)
         {
             blue_cnt += 1;
 

@@ -1,8 +1,10 @@
 #![no_std]
 #![no_main]
 
-//use std::thread;
 
+use embedded_hal::blocking::delay;
+use embedded_hal::prelude::_embedded_hal_blocking_delay_DelayMs;
+use embedded_hal::prelude::_embedded_hal_blocking_delay_DelayUs;
 #[cfg(feature="esp32")]
 use esp32_hal as hal;
 #[cfg(feature="esp32s2")]
@@ -82,7 +84,9 @@ impl ili9341::Mode for KalugaOrientation {
     }
 }
 
-/* Debouncing algorythm */
+
+
+/* Debouncing algorithm */
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum Event {
@@ -90,52 +94,49 @@ pub enum Event {
     Released,
     Nothing,
 }
-#[derive(Copy, Clone, PartialEq)]
-enum State {
-    High(u8),
-    Low(u8),
-}
 pub struct Button<T> {
     button: T,
-    state: State,
+    pressed: bool,
 }
 impl<T: ::embedded_hal::digital::v2::InputPin<Error = core::convert::Infallible>> Button<T> {
     pub fn new(button: T) -> Self {
         Button {
             button,
-            state: State::High(0),
+            pressed: true,
         }
     }
-    pub fn poll(&mut self) -> Event {
-        use self::State::*;
-        let value = self.button.is_high().unwrap();
-        match &mut self.state {
-            High(cnt) => {
-                if value {
-                    *cnt = 0
-                } else {
-                    *cnt += 1
-                }
-            }
-            Low(cnt) => {
-                if value {
-                    *cnt += 1
-                } else {
-                    *cnt = 0
-                }
-            }
-        }
-        match self.state {
-            High(cnt) if cnt >= 30 => {
-                self.state = Low(0);
+    pub fn check(&mut self){
+        self.pressed = !self.button.is_low().unwrap();
+    }
+
+    pub fn poll(&mut self, delay :&mut Delay) -> Event {
+        let pressed_now = !self.button.is_low().unwrap();
+        if !self.pressed  &&  pressed_now
+        {
+            delay.delay_ms(30 as u32);
+            self.check();
+            if !self.button.is_low().unwrap() {
                 Event::Pressed
             }
-            Low(cnt) if cnt >= 30 => {
-                self.state = High(0);
+            else {
+                Event::Nothing
+            }
+        }
+        else if self.pressed && !pressed_now{
+            delay.delay_ms(30 as u32);
+            self.check();
+            if self.button.is_low().unwrap()
+            {
                 Event::Released
             }
-            _ => Event::Nothing,
+            else {
+                Event::Nothing
+            }
         }
+        else{
+            Event::Nothing
+        }
+        
     }
 }
 
@@ -218,12 +219,12 @@ fn main() -> ! {
     #[cfg(feature = "esp32c3")]
     let mut backlight = io.pins.gpio0.into_push_pull_output();
 
-    /* Then set backlight (set_low() - display lights up when signal is in 0, set_high() - opposite case(for example.)) */
+    // /* Then set backlight (set_low() - display lights up when signal is in 0, set_high() - opposite case(for example.)) */
     let mut backlight = backlight.into_push_pull_output();
     backlight.set_high().unwrap();
 
 
-    /* Configure SPI */
+    // /* Configure SPI */
     #[cfg(feature = "esp32")]
     let spi = spi::Spi::new(
         peripherals.SPI3,
@@ -295,10 +296,9 @@ fn main() -> ! {
     let mut down_cnt = 0; 
     let mut up_cnt   = 0;
 
-
     loop {
 
-        if let Event::Pressed = button2.poll()
+        if let Event::Pressed = button2.poll(&mut delay)
         {
             menu_cnt += 1;
 
@@ -310,7 +310,7 @@ fn main() -> ! {
             .draw(&mut display)
             .unwrap();
         }
-        if let Event::Pressed = button0.poll()
+        if let Event::Pressed = button0.poll(&mut delay)
         {
             up_cnt += 1;
 
@@ -322,7 +322,7 @@ fn main() -> ! {
             .draw(&mut display)
             .unwrap();
         }
-        if let Event::Pressed = button1.poll()
+        if let Event::Pressed = button1.poll(&mut delay)
         {
             down_cnt += 1;
 
